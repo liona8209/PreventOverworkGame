@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>辛苦了，別心苦－過勞預防分類挑戰</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --low-color:#16a34a;
+    --low-bg:#eafaf1;
+    --low-bg-strong:#d5f5e0;
+    --high-color:#ea580c;
+    --high-bg:#fff2ec;
+    --high-bg-strong:#ffe1d1;
+    --wrong-color:#dc2626;
+    --wrong-bg:#fde4e4;
+    --ink:#233044;
+    --sub-ink:#5b6b83;
+    --card-bg:#ffffff;
+    --panel-bg:#ffffff;
+    --shadow:0 10px 30px rgba(35,48,68,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 15% 10%, #eaf7ff 0%, transparent 45%),
+      radial-gradient(circle at 85% 0%, #fff1e6 0%, transparent 40%),
+      linear-gradient(160deg,#f4f8fb 0%, #eef2f7 60%, #eef7f0 100%);
+    padding:24px 16px 60px;
+    -webkit-touch-callout:none;
+    touch-action:none;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  header{text-align:center;margin-bottom:22px;}
+  header .badge{
+    display:inline-block;background:linear-gradient(90deg,#16a34a,#0d9488);
+    color:#fff;font-weight:700;font-size:13px;padding:6px 16px;border-radius:999px;
+    letter-spacing:2px;margin-bottom:12px;box-shadow:var(--shadow);
+  }
+  h1{
+    font-size:clamp(22px,4vw,34px);
+    margin:0 0 10px;
+    font-weight:900;
+    background:linear-gradient(90deg,#16a34a 0%, #0ea5a4 45%, #ea580c 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .subtitle{color:var(--sub-ink);font-size:15px;margin:0 auto 4px;max-width:720px;line-height:1.7;}
+  .subtitle strong{color:var(--ink);}
+
+  .board{
+    display:flex;gap:20px;margin:26px 0 22px;flex-wrap:wrap;
+  }
+  .zone{
+    flex:1 1 320px;
+    min-width:280px;
+    border-radius:20px;
+    padding:16px 16px 20px;
+    box-shadow:var(--shadow);
+    border:2px dashed transparent;
+    transition:background .2s,border-color .2s,transform .15s;
+  }
+  .zone.low{background:var(--low-bg);border-color:#bdeccb;}
+  .zone.high{background:var(--high-bg);border-color:#ffd2b8;}
+  .zone.drag-over.low{background:var(--low-bg-strong);border-color:var(--low-color);transform:scale(1.015);}
+  .zone.drag-over.high{background:var(--high-bg-strong);border-color:var(--high-color);transform:scale(1.015);}
+
+  .zone h2{
+    margin:2px 4px 14px;font-size:17px;display:flex;align-items:center;gap:8px;
+  }
+  .zone.low h2{color:var(--low-color);}
+  .zone.high h2{color:var(--high-color);}
+  .zone .zone-desc{margin:-8px 4px 12px;font-size:12.5px;color:var(--sub-ink);}
+
+  .dropzone{
+    min-height:150px;
+    display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;
+    border-radius:14px;padding:6px;
+  }
+  .dropzone:empty::before{
+    content:"拖曳圖卡至此";
+    display:flex;align-items:center;justify-content:center;
+    width:100%;min-height:130px;color:#9aa8bd;font-size:13px;
+    border:2px dashed #d7deea;border-radius:12px;background:rgba(255,255,255,.5);
+  }
+
+  .pile-panel{
+    background:var(--panel-bg);border-radius:20px;padding:16px 16px 20px;box-shadow:var(--shadow);
+  }
+  .pile-panel h2{margin:2px 4px 14px;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  #sourcePile{
+    min-height:150px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
+    border-radius:14px;padding:8px;
+  }
+  #sourcePile.drag-over{background:#f1f5fb;}
+
+  .card{
+    width:132px;
+    background:var(--card-bg);
+    border-radius:14px;
+    border:3px solid #e6eaf1;
+    box-shadow:0 4px 10px rgba(35,48,68,.08);
+    overflow:hidden;
+    cursor:grab;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:none;
+    transition:box-shadow .15s, transform .12s, border-color .25s, background-color .25s;
+  }
+  .card:active{cursor:grabbing;}
+  .card.dragging{
+    box-shadow:0 18px 34px rgba(35,48,68,.28);
+    transform:scale(1.06) rotate(-1.5deg);
+    z-index:999;
+  }
+  .card .thumb{
+    width:100%;height:88px;object-fit:cover;display:block;background:#f0f2f6;
+    pointer-events:none;
+  }
+  .card .info{padding:8px 9px 10px;pointer-events:none;}
+  .card .title{font-size:13.5px;font-weight:700;margin:0 0 3px;line-height:1.3;}
+  .card .desc{font-size:11px;color:var(--sub-ink);margin:0;line-height:1.35;}
+
+  .card.correct{border-color:var(--low-color);background:var(--low-bg-strong);}
+  .card.correct .desc{color:#166534;}
+  .card.wrong{border-color:var(--wrong-color);background:var(--wrong-bg);animation:shake .35s;}
+  .card.wrong .desc{color:#991b1b;}
+
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-5px);}
+    75%{transform:translateX(5px);}
+  }
+
+  .controls{display:flex;justify-content:center;gap:14px;margin:26px 0 14px;flex-wrap:wrap;}
+  button{
+    font-family:inherit;font-size:15px;font-weight:700;padding:13px 30px;border-radius:999px;
+    border:none;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s;
+  }
+  button:active{transform:translateY(1px) scale(.98);}
+  #checkBtn{background:linear-gradient(90deg,#0ea5a4,#16a34a);color:#fff;}
+  #checkBtn:disabled{background:#c6cddb;cursor:not-allowed;box-shadow:none;}
+  #resetBtn{background:#fff;color:var(--ink);border:2px solid #dfe5ee;}
+  #resetBtn:hover{border-color:#b9c3d6;}
+
+  #message{
+    max-width:760px;margin:0 auto;text-align:center;font-size:15px;font-weight:700;
+    padding:14px 18px;border-radius:14px;min-height:20px;transition:opacity .2s;
+  }
+  #message.hidden{display:none;}
+  #message.warn{background:#fef9e7;color:#92720c;border:2px solid #fbe6a2;}
+  #message.success{background:#eafaf1;color:#166534;border:2px solid #bdeccb;}
+  #message.error{background:#fde4e4;color:#991b1b;border:2px solid #f7bcbc;}
+
+  .score{
+    text-align:center;color:var(--sub-ink);font-size:13px;margin:0 0 6px;
+  }
+
+  footer{text-align:center;color:#9aa8bd;font-size:12px;margin-top:34px;}
+
+  @media (max-width:640px){
+    .card{width:44%;flex:1 1 44%;}
+    .zone{flex:1 1 100%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">衛教互動小遊戲</span>
+    <h1>辛苦了，別心苦－過勞預防分類挑戰</h1>
+    <p class="subtitle">
+      降低過勞風險 vs 提高過勞風險：預防過勞分類挑戰<br>
+      請將下方打散的項目卡片，分別拖拉至左側 <strong>🛡️ 降低過勞風險</strong> 或右側 <strong>⚠️ 提高過勞風險</strong> 對應的欄位中！
+    </p>
+  </header>
+
+  <div class="board">
+    <section class="zone low" id="lowZone">
+      <h2>🛡️ 降低過勞風險區</h2>
+      <p class="zone-desc">健康、保護與維護的正向行為</p>
+      <div class="dropzone" id="lowDrop" data-zone="low"></div>
+    </section>
+
+    <section class="zone high" id="highZone">
+      <h2>⚠️ 提高過勞風險區</h2>
+      <p class="zone-desc">負荷、危險與警示的高風險因子</p>
+      <div class="dropzone" id="highDrop" data-zone="high"></div>
+    </section>
+  </div>
+
+  <div class="pile-panel">
+    <h2>🗂️ 圖卡區</h2>
+    <div id="sourcePile" data-zone="pile"></div>
+  </div>
+
+  <p class="score" id="scoreText"></p>
+  <div id="message" class="hidden"></div>
+
+  <div class="controls">
+    <button id="checkBtn">✅ 檢查答案</button>
+    <button id="resetBtn">🔄 重新開始</button>
+  </div>
+
+  <footer>辛苦了，別心苦｜過勞預防衛教宣導 — 拖拉分類遊戲</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const CARDS = [
+    { id:"health",        title:"健康管理",       desc:"定期健康檢查與追蹤。",                     correct:"low",  img:"Image/健康管理.png" },
+    { id:"exercise",       title:"身體活動",       desc:"規律適度運動。",                            correct:"low",  img:"Image/身體活動.png" },
+    { id:"rest",           title:"充足休息",       desc:"適當休息。",                                correct:"low",  img:"Image/充足休息.png" },
+    { id:"stressAdjust",   title:"壓力調適",       desc:"適度調節工作壓力。",                        correct:"low",  img:"Image/壓力調適.png" },
+    { id:"extremeStress",  title:"極端壓力工作",   desc:"極度緊張、精神負荷高的工作。",              correct:"high", img:"Image/極端壓力工作.png" },
+    { id:"shiftWork",      title:"特殊工時與班別", desc:"不規律的工作、輪班或夜班等特殊作業環境。",  correct:"high", img:"Image/特殊工時與班別.png" },
+    { id:"badEnv",         title:"不良作業環境",   desc:"異常高、低溫環境或充斥噪音等特殊作業環境。",correct:"high", img:"Image/不良作業環境.png" },
+    { id:"overload",       title:"過重負荷",       desc:"長期工作過重或短期工作超過負荷。",          correct:"high", img:"Image/過重負荷.png" }
+  ];
+
+  const sourcePile = document.getElementById('sourcePile');
+  const lowDrop = document.getElementById('lowDrop');
+  const highDrop = document.getElementById('highDrop');
+  const checkBtn = document.getElementById('checkBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const messageEl = document.getElementById('message');
+  const scoreText = document.getElementById('scoreText');
+  const dropzones = [sourcePile, lowDrop, highDrop];
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  function buildCard(data){
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id = data.id;
+    card.dataset.correct = data.correct;
+    card.innerHTML =
+      '<img class="thumb" src="'+data.img+'" alt="'+data.title+'" draggable="false">' +
+      '<div class="info">' +
+        '<p class="title">'+data.title+'</p>' +
+        '<p class="desc">'+data.desc+'</p>' +
+      '</div>';
+    attachDrag(card);
+    return card;
+  }
+
+  function renderAll(){
+    sourcePile.innerHTML = '';
+    lowDrop.innerHTML = '';
+    highDrop.innerHTML = '';
+    const shuffled = shuffle(CARDS);
+    shuffled.forEach(d => sourcePile.appendChild(buildCard(d)));
+    clearMessage();
+    updateScore();
+  }
+
+  function clearStatusClasses(){
+    document.querySelectorAll('.card').forEach(c=>{
+      c.classList.remove('correct','wrong');
+    });
+  }
+
+  function clearMessage(){
+    messageEl.className = 'hidden';
+    messageEl.textContent = '';
+  }
+
+  function showMessage(text, type){
+    messageEl.className = type;
+    messageEl.textContent = text;
+  }
+
+  function updateScore(){
+    const placed = lowDrop.children.length + highDrop.children.length;
+    scoreText.textContent = '已分類：'+placed+' / '+CARDS.length+' 張圖卡';
+  }
+
+  // ---- Pointer-based drag & drop (works for mouse + touch) ----
+  let dragEl = null;
+  let offsetX = 0, offsetY = 0;
+  let startWidth = 0, startHeight = 0;
+  let placeholder = null;
+
+  function attachDrag(card){
+    card.addEventListener('pointerdown', onPointerDown);
+  }
+
+  function onPointerDown(e){
+    if(e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
+    const card = e.currentTarget;
+    dragEl = card;
+    const rect = card.getBoundingClientRect();
+    startWidth = rect.width;
+    startHeight = rect.height;
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+
+    placeholder = document.createElement('div');
+    placeholder.style.width = rect.width+'px';
+    placeholder.style.height = rect.height+'px';
+    placeholder.style.flex = '0 0 auto';
+    placeholder.style.visibility = 'hidden';
+    card.parentElement.insertBefore(placeholder, card.nextSibling);
+
+    document.body.appendChild(card);
+    card.style.position = 'fixed';
+    card.style.left = rect.left+'px';
+    card.style.top = rect.top+'px';
+    card.style.width = startWidth+'px';
+    card.classList.add('dragging');
+    clearMessage();
+
+    card.setPointerCapture(e.pointerId);
+    card.addEventListener('pointermove', onPointerMove);
+    card.addEventListener('pointerup', onPointerUp);
+    card.addEventListener('pointercancel', onPointerUp);
+  }
+
+  function onPointerMove(e){
+    if(!dragEl) return;
+    dragEl.style.left = (e.clientX - offsetX)+'px';
+    dragEl.style.top = (e.clientY - offsetY)+'px';
+
+    dragEl.style.visibility = 'hidden';
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    dragEl.style.visibility = '';
+
+    dropzones.forEach(z => z.parentElement.classList ? null : null);
+    document.querySelectorAll('.zone, #sourcePile').forEach(el=>el.classList.remove('drag-over'));
+    if(under){
+      const zoneEl = under.closest('.dropzone') || under.closest('#sourcePile');
+      if(zoneEl){
+        const highlightTarget = zoneEl.closest('.zone') || zoneEl;
+        highlightTarget.classList.add('drag-over');
+      }
+    }
+  }
+
+  function onPointerUp(e){
+    if(!dragEl) return;
+    const card = dragEl;
+    card.removeEventListener('pointermove', onPointerMove);
+    card.removeEventListener('pointerup', onPointerUp);
+    card.removeEventListener('pointercancel', onPointerUp);
+    try{ card.releasePointerCapture(e.pointerId); }catch(err){}
+
+    card.style.visibility = 'hidden';
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    card.style.visibility = '';
+
+    document.querySelectorAll('.zone, #sourcePile').forEach(el=>el.classList.remove('drag-over'));
+
+    let target = null;
+    if(under){
+      target = under.closest('.dropzone') || (under.closest('#sourcePile'));
+    }
+
+    card.classList.remove('dragging');
+    card.style.position = '';
+    card.style.left = '';
+    card.style.top = '';
+    card.style.width = '';
+
+    if(target){
+      target.appendChild(card);
+    }else if(placeholder && placeholder.parentElement){
+      placeholder.parentElement.insertBefore(card, placeholder);
+    }else{
+      sourcePile.appendChild(card);
+    }
+
+    if(placeholder && placeholder.parentElement){
+      placeholder.parentElement.removeChild(placeholder);
+    }
+    placeholder = null;
+    dragEl = null;
+
+    card.classList.remove('correct','wrong');
+    updateScore();
+  }
+
+  // ---- Check answers ----
+  checkBtn.addEventListener('click', function(){
+    const total = CARDS.length;
+    const placed = lowDrop.children.length + highDrop.children.length;
+
+    if(placed < total){
+      clearStatusClasses();
+      showMessage('⚠️ 還有圖卡尚未分類完成，請全部拖拉至欄位後再檢查！', 'warn');
+      return;
+    }
+
+    let allCorrect = true;
+    Array.from(lowDrop.children).forEach(card=>{
+      const ok = card.dataset.correct === 'low';
+      card.classList.toggle('correct', ok);
+      card.classList.toggle('wrong', !ok);
+      if(!ok) allCorrect = false;
+    });
+    Array.from(highDrop.children).forEach(card=>{
+      const ok = card.dataset.correct === 'high';
+      card.classList.toggle('correct', ok);
+      card.classList.toggle('wrong', !ok);
+      if(!ok) allCorrect = false;
+    });
+
+    if(allCorrect){
+      showMessage('🎉 太棒了！全部分類正確！你已經完全掌握了預防過勞的核心觀念！', 'success');
+    }else{
+      showMessage('❌ 有部分圖卡分類錯誤（紅框標示），請調整後再次檢查！', 'error');
+    }
+  });
+
+  resetBtn.addEventListener('click', renderAll);
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
