@@ -155,14 +155,16 @@
   }
 
   .controls{display:flex;justify-content:center;gap:14px;margin:26px 0 14px;flex-wrap:wrap;}
-  button{
+  button,.btn-link{
     font-family:inherit;font-size:15px;font-weight:700;padding:13px 30px;border-radius:999px;
     border:none;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s;
+    display:inline-flex;align-items:center;justify-content:center;text-decoration:none;
   }
-  button:active{transform:translateY(1px) scale(.98);}
+  button:active,.btn-link:active{transform:translateY(1px) scale(.98);}
   #checkBtn{background:linear-gradient(90deg,#22d3ee,#34d399);color:#08221b;}
   #checkBtn:disabled{background:#7d8aa8;color:#fff;cursor:not-allowed;box-shadow:none;}
   #resetBtn{background:#fff;color:var(--card-ink);border:2px solid rgba(255,255,255,0.5);}
+  #nextLevelBtn{background:linear-gradient(90deg,#a78bfa,#f472b6);color:#fff;}
   #resetBtn:hover{border-color:#fff;}
 
   #message{
@@ -238,6 +240,7 @@
   <div class="controls">
     <button id="checkBtn">✅ 檢查答案</button>
     <button id="resetBtn">🔄 重新開始</button>
+    <a id="nextLevelBtn" class="btn-link" href="https://liona8209.github.io/OccupationMemoryGame/" target="_blank" rel="noopener">➡️ 下一關</a>
   </div>
 
   <footer>辛苦了，別心苦｜過勞預防衛教宣導 — 拖拉分類遊戲</footer>
