@@ -52,16 +52,21 @@
 
   header{text-align:center;margin-bottom:22px;}
   header .badge{
-    display:inline-block;background:linear-gradient(90deg,#34d399,#22d3ee);
-    color:#08221b;font-weight:700;font-size:14px;padding:6px 16px;border-radius:999px;
-    letter-spacing:2px;margin-bottom:12px;box-shadow:var(--shadow);
+    display:inline-block;
+    background:linear-gradient(135deg, rgba(255,255,255,0.28), rgba(255,255,255,0.08));
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    color:#fff;font-weight:700;font-size:14px;padding:6px 18px;border-radius:999px;
+    letter-spacing:2px;margin-bottom:12px;
+    border:1px solid rgba(255,255,255,0.4);
+    box-shadow:0 8px 24px rgba(9,16,36,0.25), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -6px 12px rgba(255,255,255,0.06);
+    text-shadow:0 1px 3px rgba(9,16,36,0.35);
   }
   h1{
     font-size:clamp(26px,4.5vw,40px);
     margin:0 0 10px;
     font-weight:900;
-    background:linear-gradient(90deg,#34d399 0%, #22d3ee 45%, #ff9457 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
+    color:#fff;
+    text-shadow:0 2px 12px rgba(9,16,36,0.35);
   }
   .subtitle{color:var(--sub-ink);font-size:17px;margin:0 auto 4px;max-width:760px;line-height:1.7;}
   .subtitle strong{color:var(--ink);}
