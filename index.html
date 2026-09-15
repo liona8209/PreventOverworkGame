@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>辛苦了，別心苦－過勞預防分類挑戰</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +35,7 @@
       linear-gradient(160deg,#f4f8fb 0%, #eef2f7 60%, #eef7f0 100%);
     padding:24px 16px 60px;
     -webkit-touch-callout:none;
-    touch-action:pan-y;
+    touch-action:pan-y pinch-zoom;
     overscroll-behavior-y:contain;
   }
   .wrap{max-width:1180px;margin:0 auto;}
@@ -167,8 +167,33 @@
   footer{text-align:center;color:#9aa8bd;font-size:12px;margin-top:34px;}
 
   @media (max-width:640px){
-    .card{width:44%;flex:1 1 44%;}
-    .zone{flex:1 1 100%;}
+    /* 圖卡區移到最上方，左右兩個風險欄位維持並排 */
+    .wrap{display:flex;flex-direction:column;}
+    header{order:1;}
+    .pile-panel{order:2;}
+    .board{order:3;}
+    .score{order:4;}
+    #message{order:5;}
+    .controls{order:6;}
+    footer{order:7;}
+
+    .board{gap:8px;flex-wrap:nowrap;margin:16px 0;}
+    .zone{flex:1 1 0;min-width:0;padding:10px 8px 12px;border-radius:14px;}
+    .zone h2{font-size:13.5px;gap:4px;margin:2px 2px 8px;}
+    .zone .zone-desc{font-size:10px;margin:-6px 2px 8px;line-height:1.3;}
+    .dropzone{min-height:110px;padding:4px;gap:6px;}
+    .dropzone:empty::before{min-height:100px;font-size:11px;padding:0 4px;text-align:center;}
+
+    .pile-panel{padding:14px 12px 16px;}
+    #sourcePile{gap:8px;}
+
+    .card{width:calc(50% - 4px);}
+    .dropzone .card{width:100%;display:flex;align-items:center;text-align:left;}
+    .dropzone .card .thumb{width:56px;height:56px;flex:0 0 auto;}
+    .dropzone .card .info{padding:6px 8px;}
+    .card .thumb{height:76px;}
+    .card .title{font-size:12.5px;}
+    .card .desc{font-size:10.5px;}
   }
 </style>
 </head>
