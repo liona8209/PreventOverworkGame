@@ -43,10 +43,10 @@
   /* 圖卡區固定在最上方，欄位、分數、訊息、按鈕依序排列在下方（桌面／手機一致） */
   header{order:1;}
   .controls{order:2;}
-  .board{order:3;}
-  .pile-panel{order:4;}
-  .score{order:5;}
-  #message{order:6;}
+  #message{order:3;}
+  .board{order:4;}
+  .pile-panel{order:5;}
+  .score{order:6;}
   footer{order:7;}
 
   header{text-align:center;margin-bottom:22px;}
@@ -169,7 +169,7 @@
   #resetBtn:hover{border-color:#fff;}
 
   #message{
-    max-width:760px;margin:0 auto;text-align:center;font-size:15px;font-weight:700;
+    max-width:760px;margin:0 auto 22px;text-align:center;font-size:15px;font-weight:700;
     padding:14px 18px;border-radius:14px;min-height:20px;transition:opacity .2s;
   }
   #message.hidden{display:none;}
@@ -369,23 +369,35 @@
     card.addEventListener('pointercancel', onPointerUp);
   }
 
+  // 依「卡片與欄位重疊面積」判斷目標欄位：卡片碰到哪個欄位的面積最大，就歸類到那裡
+  function getBestOverlapZone(cardRect){
+    let best = null, bestArea = 0;
+    dropzones.forEach(zone=>{
+      const r = zone.getBoundingClientRect();
+      const xOverlap = Math.min(cardRect.right, r.right) - Math.max(cardRect.left, r.left);
+      const yOverlap = Math.min(cardRect.bottom, r.bottom) - Math.max(cardRect.top, r.top);
+      if(xOverlap > 0 && yOverlap > 0){
+        const area = xOverlap * yOverlap;
+        if(area > bestArea){
+          bestArea = area;
+          best = zone;
+        }
+      }
+    });
+    return best;
+  }
+
   function onPointerMove(e){
     if(!dragEl) return;
     dragEl.style.left = (e.clientX - offsetX)+'px';
     dragEl.style.top = (e.clientY - offsetY)+'px';
 
-    dragEl.style.visibility = 'hidden';
-    const under = document.elementFromPoint(e.clientX, e.clientY);
-    dragEl.style.visibility = '';
+    const target = getBestOverlapZone(dragEl.getBoundingClientRect());
 
-    dropzones.forEach(z => z.parentElement.classList ? null : null);
     document.querySelectorAll('.zone, #sourcePile').forEach(el=>el.classList.remove('drag-over'));
-    if(under){
-      const zoneEl = under.closest('.dropzone') || under.closest('#sourcePile');
-      if(zoneEl){
-        const highlightTarget = zoneEl.closest('.zone') || zoneEl;
-        highlightTarget.classList.add('drag-over');
-      }
+    if(target){
+      const highlightTarget = target.closest('.zone') || target;
+      highlightTarget.classList.add('drag-over');
     }
   }
 
@@ -397,16 +409,9 @@
     card.removeEventListener('pointercancel', onPointerUp);
     try{ card.releasePointerCapture(e.pointerId); }catch(err){}
 
-    card.style.visibility = 'hidden';
-    const under = document.elementFromPoint(e.clientX, e.clientY);
-    card.style.visibility = '';
+    const target = getBestOverlapZone(card.getBoundingClientRect());
 
     document.querySelectorAll('.zone, #sourcePile').forEach(el=>el.classList.remove('drag-over'));
-
-    let target = null;
-    if(under){
-      target = under.closest('.dropzone') || (under.closest('#sourcePile'));
-    }
 
     card.classList.remove('dragging');
     card.style.position = '';
