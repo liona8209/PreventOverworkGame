@@ -38,7 +38,15 @@
     touch-action:pan-y pinch-zoom;
     overscroll-behavior-y:contain;
   }
-  .wrap{max-width:1180px;margin:0 auto;}
+  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;}
+  /* 圖卡區固定在最上方，欄位、分數、訊息、按鈕依序排列在下方（桌面／手機一致） */
+  header{order:1;}
+  .pile-panel{order:2;}
+  .board{order:3;}
+  .score{order:4;}
+  #message{order:5;}
+  .controls{order:6;}
+  footer{order:7;}
 
   header{text-align:center;margin-bottom:22px;}
   header .badge{
@@ -167,16 +175,7 @@
   footer{text-align:center;color:#9aa8bd;font-size:12px;margin-top:34px;}
 
   @media (max-width:640px){
-    /* 圖卡區移到最上方，左右兩個風險欄位維持並排 */
-    .wrap{display:flex;flex-direction:column;}
-    header{order:1;}
-    .pile-panel{order:2;}
-    .board{order:3;}
-    .score{order:4;}
-    #message{order:5;}
-    .controls{order:6;}
-    footer{order:7;}
-
+    /* 窄螢幕下的欄位維持並排（不堆疊），並縮小尺寸以適應版面 */
     .board{gap:8px;flex-wrap:nowrap;margin:16px 0;}
     .zone{flex:1 1 0;min-width:0;padding:10px 8px 12px;border-radius:14px;}
     .zone h2{font-size:13.5px;gap:4px;margin:2px 2px 8px;}
