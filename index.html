@@ -156,9 +156,10 @@
 
   .controls{display:flex;justify-content:center;gap:14px;margin:26px 0 14px;flex-wrap:wrap;}
   button,.btn-link{
-    font-family:inherit;font-size:15px;font-weight:700;padding:13px 30px;border-radius:999px;
+    font-family:inherit;font-size:15px;font-weight:700;padding:13px 20px;border-radius:999px;
     border:none;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s;
     display:inline-flex;align-items:center;justify-content:center;text-decoration:none;
+    width:160px;white-space:nowrap;text-align:center;
   }
   button:active,.btn-link:active{transform:translateY(1px) scale(.98);}
   #checkBtn{background:linear-gradient(90deg,#22d3ee,#34d399);color:#08221b;}
@@ -201,6 +202,8 @@
     .card .thumb{height:76px;}
     .card .title{font-size:12.5px;}
     .card .desc{font-size:10.5px;}
+
+    button,.btn-link{min-width:0;flex:1 1 140px;padding:13px 14px;}
   }
 </style>
 </head>
