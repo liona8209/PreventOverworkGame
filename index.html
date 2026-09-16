@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>辛苦了，別心苦｜預防過勞分類挑戰</title>
+<title>過勞防護不心苦｜預防過勞大挑戰</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -12,11 +12,8 @@
     --bg-start:#1e3c72;
     --bg-end:#2a5298;
     --low-color:#34d399;
-    --low-bg-strong:#d5f5e0;
     --high-color:#ff9457;
-    --high-bg-strong:#ffe1d1;
     --wrong-color:#ff6b6b;
-    --wrong-bg:#fde4e4;
     --ink:#f0f4ff;
     --sub-ink:#cfe0ff;
     --card-bg:#ffffff;
@@ -27,6 +24,7 @@
     --shadow:0 10px 30px rgba(9,16,36,0.35);
   }
   *{box-sizing:border-box;}
+  [hidden]{display:none!important;}
   html,body{margin:0;padding:0;}
   body{
     min-height:100vh;
@@ -39,16 +37,14 @@
     touch-action:pan-y pinch-zoom;
     overscroll-behavior-y:contain;
   }
-  .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;}
-  /* 圖卡區固定在最上方，欄位、分數、訊息、按鈕依序排列在下方（桌面／手機一致） */
+  .wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;}
+  /* 排版順序：標題 -> 按鈕 -> 訊息 -> 題目卡 -> 頁尾 -> 合作單位 LOGO（桌面／手機一致） */
   header{order:1;}
   .controls{order:2;}
   #message{order:3;}
-  .board{order:4;}
-  .pile-panel{order:5;}
-  .score{order:6;}
-  footer{order:7;}
-  .partner-links{order:8;}
+  .quiz-panel{order:4;}
+  footer{order:5;}
+  .partner-links{order:6;}
 
   header{text-align:center;margin-bottom:22px;}
   header .badge{
@@ -68,97 +64,8 @@
     color:#fff;
     text-shadow:0 2px 12px rgba(9,16,36,0.35);
   }
-  .subtitle{color:var(--sub-ink);font-size:17px;margin:0 auto 4px;max-width:760px;line-height:1.7;}
+  .subtitle{color:var(--sub-ink);font-size:17px;margin:0 auto 4px;max-width:640px;line-height:1.7;}
   .subtitle strong{color:var(--ink);}
-
-  .board{
-    display:flex;gap:20px;margin:26px 0 22px;flex-wrap:wrap;
-  }
-  .zone{
-    flex:1 1 320px;
-    min-width:280px;
-    border-radius:20px;
-    padding:16px 16px 20px;
-    box-shadow:var(--shadow);
-    background:var(--panel-bg);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    border:2px solid var(--panel-border);
-    transition:background .2s,border-color .2s,transform .15s,box-shadow .2s;
-  }
-  .zone.low{border-color:rgba(52,211,153,0.5);}
-  .zone.high{border-color:rgba(255,148,87,0.5);}
-  .zone.drag-over.low{background:rgba(52,211,153,0.14);border-color:var(--low-color);transform:scale(1.015);box-shadow:0 0 0 3px rgba(52,211,153,.25),var(--shadow);}
-  .zone.drag-over.high{background:rgba(255,148,87,0.14);border-color:var(--high-color);transform:scale(1.015);box-shadow:0 0 0 3px rgba(255,148,87,.25),var(--shadow);}
-
-  .zone h2{
-    margin:2px 4px 14px;font-size:19px;display:flex;align-items:center;gap:8px;
-  }
-  .zone.low h2{color:var(--low-color);}
-  .zone.high h2{color:var(--high-color);}
-  .zone .zone-desc{margin:-8px 4px 12px;font-size:14px;color:var(--sub-ink);}
-
-  .dropzone{
-    min-height:150px;
-    display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;
-    border-radius:14px;padding:6px;
-  }
-  .dropzone:empty::before{
-    content:"拖曳圖卡至此";
-    display:flex;align-items:center;justify-content:center;
-    width:100%;min-height:130px;color:rgba(240,244,255,0.5);font-size:14.5px;
-    border:2px dashed rgba(255,255,255,0.22);border-radius:12px;background:rgba(255,255,255,.04);
-  }
-
-  .pile-panel{
-    background:var(--panel-bg);border-radius:20px;padding:16px 16px 20px;box-shadow:var(--shadow);
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-    border:1px solid var(--panel-border);
-  }
-  .pile-panel h2{margin:2px 4px 14px;font-size:18px;color:var(--ink);display:flex;align-items:center;gap:8px;}
-  #sourcePile{
-    min-height:150px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
-    border-radius:14px;padding:8px;
-  }
-  #sourcePile.drag-over{background:rgba(255,255,255,0.08);}
-
-  .card{
-    width:132px;
-    background:var(--card-bg);
-    border-radius:14px;
-    border:3px solid rgba(255,255,255,0.7);
-    box-shadow:0 6px 16px rgba(9,16,36,.35);
-    overflow:hidden;
-    cursor:grab;
-    user-select:none;
-    -webkit-user-select:none;
-    touch-action:none;
-    transition:box-shadow .15s, transform .12s, border-color .25s, background-color .25s;
-  }
-  .card:active{cursor:grabbing;}
-  .card.dragging{
-    box-shadow:0 18px 34px rgba(9,16,36,.5);
-    transform:scale(1.06) rotate(-1.5deg);
-    z-index:999;
-  }
-  .card .thumb{
-    width:100%;height:88px;object-fit:cover;display:block;background:#f0f2f6;
-    pointer-events:none;
-  }
-  .card .info{padding:8px 9px 10px;pointer-events:none;}
-  .card .title{font-size:15px;font-weight:700;margin:0 0 3px;line-height:1.3;color:var(--card-ink);}
-  .card .desc{font-size:12.5px;color:var(--card-sub-ink);margin:0;line-height:1.35;}
-
-  .card.correct{border-color:var(--low-color);background:var(--low-bg-strong);}
-  .card.correct .desc{color:#166534;}
-  .card.wrong{border-color:var(--wrong-color);background:var(--wrong-bg);animation:shake .35s;}
-  .card.wrong .desc{color:#991b1b;}
-
-  @keyframes shake{
-    0%,100%{transform:translateX(0);}
-    25%{transform:translateX(-5px);}
-    75%{transform:translateX(5px);}
-  }
 
   .controls{display:flex;justify-content:center;gap:14px;margin:26px 0 14px;flex-wrap:wrap;}
   button,.btn-link{
@@ -168,23 +75,75 @@
     width:160px;white-space:nowrap;text-align:center;
   }
   button:active,.btn-link:active{transform:translateY(1px) scale(.98);}
-  #checkBtn{background:linear-gradient(90deg,#22d3ee,#34d399);color:#08221b;}
-  #checkBtn:disabled{background:#7d8aa8;color:#fff;cursor:not-allowed;box-shadow:none;}
+  button:disabled{cursor:not-allowed;}
   #resetBtn{background:linear-gradient(135deg,#ffe259,#ffa751);color:#1e2a4a;border:none;}
   #nextLevelBtn{background:linear-gradient(90deg,#a78bfa,#f472b6);color:#fff;}
 
   #message{
-    max-width:760px;margin:0 auto 22px;text-align:center;font-size:16.5px;font-weight:700;
+    max-width:640px;margin:0 auto 22px;text-align:center;font-size:16.5px;font-weight:700;
     padding:14px 18px;border-radius:14px;min-height:20px;transition:opacity .2s;
   }
   #message.hidden{display:none;}
-  #message.warn{background:#fef9e7;color:#92720c;border:2px solid #fbe6a2;}
   #message.success{background:#eafaf1;color:#166534;border:2px solid #bdeccb;}
   #message.error{background:#fde4e4;color:#991b1b;border:2px solid #f7bcbc;}
 
-  .score{
-    text-align:center;color:var(--sub-ink);font-size:14.5px;margin:0 0 6px;
+  /* ---- 題目卡（玻璃感面板） ---- */
+  .quiz-panel{
+    background:var(--panel-bg);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:1px solid var(--panel-border);
+    border-radius:24px;
+    padding:28px 24px 30px;
+    box-shadow:var(--shadow);
+    text-align:center;
   }
+
+  .screen[hidden]{display:none;}
+
+  .screen-icon{font-size:44px;margin-bottom:6px;}
+  .screen h2{margin:0 0 10px;font-size:24px;color:#fff;}
+  .screen p{margin:0 auto 22px;max-width:480px;color:var(--sub-ink);font-size:15.5px;line-height:1.7;}
+
+  .cta-btn{
+    font-family:inherit;font-weight:700;font-size:17px;border:none;border-radius:999px;
+    cursor:pointer;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s;
+    padding:15px 36px;
+  }
+  .cta-btn:active{transform:translateY(1px) scale(.98);}
+  #startBtn,#nextQuestionBtn{background:linear-gradient(90deg,#22d3ee,#34d399);color:#08221b;}
+  #restartQuizBtn{background:linear-gradient(135deg,#ffe259,#ffa751);color:#1e2a4a;}
+
+  .stat-row{
+    display:flex;justify-content:center;gap:14px;margin-bottom:20px;flex-wrap:wrap;
+  }
+  .stat-chip{
+    background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.2);
+    border-radius:14px;padding:8px 20px;min-width:120px;
+  }
+  .stat-chip .stat-label{display:block;font-size:12px;color:var(--sub-ink);letter-spacing:1px;margin-bottom:2px;}
+  .stat-chip .stat-value{display:block;font-size:18px;font-weight:900;color:#fff;}
+
+  .question-img{
+    width:100%;max-width:420px;height:220px;object-fit:cover;border-radius:16px;
+    box-shadow:0 8px 20px rgba(9,16,36,.4);border:3px solid rgba(255,255,255,0.6);
+    margin:0 auto 18px;display:block;background:#f0f2f6;
+  }
+  .question-title{margin:0 0 8px;font-size:22px;font-weight:900;color:#fff;}
+  .question-desc{margin:0 0 24px;font-size:15.5px;color:var(--sub-ink);line-height:1.6;}
+
+  .answer-buttons{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+  .answer-btn{
+    font-family:inherit;font-weight:900;font-size:17px;border:none;border-radius:18px;
+    padding:20px 22px;flex:1 1 200px;max-width:240px;cursor:pointer;color:#fff;
+    box-shadow:0 8px 20px rgba(9,16,36,.35);transition:transform .12s, box-shadow .12s, filter .2s, opacity .2s;
+  }
+  .answer-btn:active{transform:translateY(1px) scale(.98);}
+  .answer-btn.low{background:linear-gradient(135deg,#22c55e,#16a34a);}
+  .answer-btn.high{background:linear-gradient(135deg,#f97316,#ef4444);}
+  .answer-btn:disabled{cursor:not-allowed;}
+  .answer-btn.dim{opacity:.4;filter:grayscale(.4);}
+  .answer-btn.correct{box-shadow:0 0 0 4px rgba(52,211,153,.55), 0 8px 20px rgba(9,16,36,.35);opacity:1;filter:none;}
+  .answer-btn.wrong{box-shadow:0 0 0 4px rgba(255,107,107,.55), 0 8px 20px rgba(9,16,36,.35);opacity:1;filter:none;}
 
   footer{text-align:center;color:var(--sub-ink);opacity:.65;font-size:13px;margin-top:34px;}
 
@@ -200,26 +159,12 @@
   .partner-logo:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 10px 20px rgba(9,16,36,.4);}
 
   @media (max-width:640px){
-    /* 窄螢幕下的欄位維持並排（不堆疊），並縮小尺寸以適應版面 */
-    .board{gap:8px;flex-wrap:nowrap;margin:16px 0;}
-    .zone{flex:1 1 0;min-width:0;padding:10px 8px 12px;border-radius:14px;}
-    .zone h2{font-size:15px;gap:4px;margin:2px 2px 8px;}
-    .zone .zone-desc{font-size:11.5px;margin:-6px 2px 8px;line-height:1.3;}
-    .dropzone{min-height:110px;padding:4px;gap:6px;}
-    .dropzone:empty::before{min-height:100px;font-size:12.5px;padding:0 4px;text-align:center;}
-
-    .pile-panel{padding:14px 12px 16px;}
-    #sourcePile{gap:8px;}
-
-    .card{width:calc(50% - 4px);}
-    .dropzone .card{width:100%;display:flex;align-items:center;text-align:left;}
-    .dropzone .card .thumb{width:56px;height:56px;flex:0 0 auto;}
-    .dropzone .card .info{padding:6px 8px;}
-    .card .thumb{height:76px;}
-    .card .title{font-size:14px;}
-    .card .desc{font-size:12px;}
-
+    .quiz-panel{padding:22px 16px 24px;border-radius:20px;}
+    .question-img{height:180px;}
+    .question-title{font-size:19px;}
+    .answer-btn{flex:1 1 45%;padding:18px 12px;font-size:15px;}
     button,.btn-link{min-width:0;flex:1 1 140px;padding:13px 14px;}
+    .cta-btn{width:100%;}
   }
 </style>
 </head>
@@ -227,42 +172,64 @@
 <div class="wrap">
   <header>
     <span class="badge">衛教互動小遊戲</span>
-    <h1>辛苦了，別心苦</h1>
+    <h1>過勞防護不心苦</h1>
     <p class="subtitle">
-      預防過勞分類挑戰<br>
-      請將下方打散的項目卡片，分別拖拉至左側 <strong>🛡️ 降低過勞風險</strong> 或右側 <strong>⚠️ 提高過勞風險</strong> 對應的欄位中！
+      《過勞防護不心苦》預防過勞大挑戰<br>
+      看情境圖卡，判斷這是「減少過勞風險」還是「增加過勞風險」！
     </p>
   </header>
 
-  <div class="board">
-    <section class="zone low" id="lowZone">
-      <h2>🛡️ 降低過勞風險</h2>
-      <p class="zone-desc">健康、保護與維護的正向行為</p>
-      <div class="dropzone" id="lowDrop" data-zone="low"></div>
-    </section>
-
-    <section class="zone high" id="highZone">
-      <h2>⚠️ 提高過勞風險</h2>
-      <p class="zone-desc">負荷、危險與警示的高風險因子</p>
-      <div class="dropzone" id="highDrop" data-zone="high"></div>
-    </section>
-  </div>
-
-  <div class="pile-panel">
-    <h2>🗂️ 圖卡區</h2>
-    <div id="sourcePile" data-zone="pile"></div>
-  </div>
-
-  <p class="score" id="scoreText"></p>
-  <div id="message" class="hidden"></div>
-
   <div class="controls">
-    <button id="checkBtn">✅ 檢查答案</button>
     <button id="resetBtn">🔄 重新開始</button>
     <a id="nextLevelBtn" class="btn-link" href="https://liona8209.github.io/OccupationMemoryGame/" target="_blank" rel="noopener">➡️ 下一關</a>
   </div>
 
-  <footer>辛苦了，別心苦｜過勞預防衛教宣導 — 拖拉分類遊戲</footer>
+  <div id="message" class="hidden"></div>
+
+  <div class="quiz-panel">
+    <!-- 開始畫面 -->
+    <div class="screen" id="startScreen">
+      <div class="screen-icon">🚀</div>
+      <h2>準備好了嗎？</h2>
+      <p>接下來會看到 8 組情境圖卡，請判斷每個情境是「減少過勞風險」還是「增加過勞風險」！答對越多，代表你越懂得如何預防過勞。</p>
+      <button class="cta-btn" id="startBtn">🚀 開始挑戰</button>
+    </div>
+
+    <!-- 作答畫面 -->
+    <div class="screen" id="quizScreen" hidden>
+      <div class="stat-row">
+        <div class="stat-chip">
+          <span class="stat-label">進度</span>
+          <span class="stat-value" id="progressText">第 1 題 / 共 8 題</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-label">得分</span>
+          <span class="stat-value" id="scoreValue">0</span>
+        </div>
+      </div>
+
+      <img class="question-img" id="questionImg" src="" alt="">
+      <h3 class="question-title" id="questionTitle"></h3>
+      <p class="question-desc" id="questionDesc"></p>
+
+      <div class="answer-buttons" id="answerButtons">
+        <button class="answer-btn low" id="lowAnswerBtn" data-answer="low">🟢 減少過勞風險</button>
+        <button class="answer-btn high" id="highAnswerBtn" data-answer="high">🔴 增加過勞風險</button>
+      </div>
+
+      <button class="cta-btn" id="nextQuestionBtn" hidden>➡️ 下一題</button>
+    </div>
+
+    <!-- 結算畫面 -->
+    <div class="screen" id="endScreen" hidden>
+      <div class="screen-icon">🎉</div>
+      <h2>遊戲結束！</h2>
+      <p id="finalScoreText">你答對了 8 / 8 題！</p>
+      <button class="cta-btn" id="restartQuizBtn">🔄 重新開始</button>
+    </div>
+  </div>
+
+  <footer>過勞防護不心苦｜過勞預防衛教宣導 — 情境判斷小遊戲</footer>
 
   <div class="partner-links">
     <a href="https://org.vghks.gov.tw/omd/Default.aspx" target="_blank" rel="noopener" class="partner-logo" aria-label="高榮職醫科">
@@ -281,65 +248,39 @@
 (function(){
   "use strict";
 
-  const CARDS = [
-    { id:"health",        title:"健康管理",       desc:"定期健康檢查與追蹤。",                     correct:"low",  img:"Image/健康管理.png" },
-    { id:"exercise",       title:"身體活動",       desc:"規律適度運動。",                            correct:"low",  img:"Image/身體活動.png" },
-    { id:"rest",           title:"充足休息",       desc:"適當休息。",                                correct:"low",  img:"Image/充足休息.png" },
-    { id:"stressAdjust",   title:"壓力調適",       desc:"適度調節工作壓力。",                        correct:"low",  img:"Image/壓力調適.png" },
-    { id:"extremeStress",  title:"極端壓力工作",   desc:"極度緊張、精神負荷高的工作。",              correct:"high", img:"Image/極端壓力工作.png" },
-    { id:"shiftWork",      title:"特殊工時與班別", desc:"不規律的工作、輪班或夜班等特殊作業環境。",  correct:"high", img:"Image/特殊工時與班別.png" },
-    { id:"badEnv",         title:"不良作業環境",   desc:"異常高、低溫環境或充斥噪音等特殊作業環境。",correct:"high", img:"Image/不良作業環境.png" },
-    { id:"overload",       title:"過重負荷",       desc:"長期工作過重或短期工作超過負荷。",          correct:"high", img:"Image/過重負荷.png" }
+  const QUESTIONS = [
+    { title:"健康管理",       desc:"定期健康檢查與追蹤。",                     answer:"low",  img:"Image/健康管理.png" },
+    { title:"身體活動",       desc:"規律適度運動。",                            answer:"low",  img:"Image/身體活動.png" },
+    { title:"充足休息",       desc:"適當休息。",                                answer:"low",  img:"Image/充足休息.png" },
+    { title:"壓力調適",       desc:"適度調節工作壓力。",                        answer:"low",  img:"Image/壓力調適.png" },
+    { title:"極端壓力工作",   desc:"極度緊張、精神負荷高的工作。",              answer:"high", img:"Image/極端壓力工作.png" },
+    { title:"特殊工時與班別", desc:"不規律的工作、輪班或夜班等特殊作業環境。",  answer:"high", img:"Image/特殊工時與班別.png" },
+    { title:"不良作業環境",   desc:"異常高、低溫環境或充斥噪音等特殊作業環境。",answer:"high", img:"Image/不良作業環境.png" },
+    { title:"過重負荷",       desc:"長期工作過重或短期工作超過負荷。",          answer:"high", img:"Image/過重負荷.png" }
   ];
 
-  const sourcePile = document.getElementById('sourcePile');
-  const lowDrop = document.getElementById('lowDrop');
-  const highDrop = document.getElementById('highDrop');
-  const checkBtn = document.getElementById('checkBtn');
+  const startScreen = document.getElementById('startScreen');
+  const quizScreen = document.getElementById('quizScreen');
+  const endScreen = document.getElementById('endScreen');
+
+  const startBtn = document.getElementById('startBtn');
   const resetBtn = document.getElementById('resetBtn');
+  const restartQuizBtn = document.getElementById('restartQuizBtn');
+  const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+  const lowAnswerBtn = document.getElementById('lowAnswerBtn');
+  const highAnswerBtn = document.getElementById('highAnswerBtn');
+
+  const progressText = document.getElementById('progressText');
+  const scoreValue = document.getElementById('scoreValue');
+  const questionImg = document.getElementById('questionImg');
+  const questionTitle = document.getElementById('questionTitle');
+  const questionDesc = document.getElementById('questionDesc');
+  const finalScoreText = document.getElementById('finalScoreText');
   const messageEl = document.getElementById('message');
-  const scoreText = document.getElementById('scoreText');
-  const dropzones = [sourcePile, lowDrop, highDrop];
 
-  function shuffle(arr){
-    const a = arr.slice();
-    for(let i=a.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [a[i],a[j]]=[a[j],a[i]];
-    }
-    return a;
-  }
-
-  function buildCard(data){
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.id = data.id;
-    card.dataset.correct = data.correct;
-    card.innerHTML =
-      '<img class="thumb" src="'+data.img+'" alt="'+data.title+'" draggable="false">' +
-      '<div class="info">' +
-        '<p class="title">'+data.title+'</p>' +
-        '<p class="desc">'+data.desc+'</p>' +
-      '</div>';
-    attachDrag(card);
-    return card;
-  }
-
-  function renderAll(){
-    sourcePile.innerHTML = '';
-    lowDrop.innerHTML = '';
-    highDrop.innerHTML = '';
-    const shuffled = shuffle(CARDS);
-    shuffled.forEach(d => sourcePile.appendChild(buildCard(d)));
-    clearMessage();
-    updateScore();
-  }
-
-  function clearStatusClasses(){
-    document.querySelectorAll('.card').forEach(c=>{
-      c.classList.remove('correct','wrong');
-    });
-  }
+  let currentIndex = 0;
+  let score = 0;
+  let answered = false;
 
   function clearMessage(){
     messageEl.className = 'hidden';
@@ -351,155 +292,92 @@
     messageEl.textContent = text;
   }
 
-  function updateScore(){
-    const placed = lowDrop.children.length + highDrop.children.length;
-    scoreText.textContent = '已分類：'+placed+' / '+CARDS.length+' 張圖卡';
+  function showScreen(screen){
+    [startScreen, quizScreen, endScreen].forEach(s => { s.hidden = (s !== screen); });
   }
 
-  // ---- Pointer-based drag & drop (works for mouse + touch) ----
-  let dragEl = null;
-  let offsetX = 0, offsetY = 0;
-  let startWidth = 0, startHeight = 0;
-  let placeholder = null;
-
-  function attachDrag(card){
-    card.addEventListener('pointerdown', onPointerDown);
+  function goToStart(){
+    currentIndex = 0;
+    score = 0;
+    answered = false;
+    clearMessage();
+    showScreen(startScreen);
   }
 
-  function onPointerDown(e){
-    if(e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
-    const card = e.currentTarget;
-    dragEl = card;
-    const rect = card.getBoundingClientRect();
-    startWidth = rect.width;
-    startHeight = rect.height;
-    offsetX = e.clientX - rect.left;
-    offsetY = e.clientY - rect.top;
-
-    placeholder = document.createElement('div');
-    placeholder.style.width = rect.width+'px';
-    placeholder.style.height = rect.height+'px';
-    placeholder.style.flex = '0 0 auto';
-    placeholder.style.visibility = 'hidden';
-    card.parentElement.insertBefore(placeholder, card.nextSibling);
-
-    document.body.appendChild(card);
-    card.style.position = 'fixed';
-    card.style.left = rect.left+'px';
-    card.style.top = rect.top+'px';
-    card.style.width = startWidth+'px';
-    card.classList.add('dragging');
+  function renderQuestion(){
+    const q = QUESTIONS[currentIndex];
+    answered = false;
     clearMessage();
 
-    card.setPointerCapture(e.pointerId);
-    card.addEventListener('pointermove', onPointerMove);
-    card.addEventListener('pointerup', onPointerUp);
-    card.addEventListener('pointercancel', onPointerUp);
+    progressText.textContent = '第 ' + (currentIndex + 1) + ' 題 / 共 ' + QUESTIONS.length + ' 題';
+    scoreValue.textContent = score;
+    questionImg.src = q.img;
+    questionImg.alt = q.title;
+    questionTitle.textContent = q.title;
+    questionDesc.textContent = q.desc;
+
+    [lowAnswerBtn, highAnswerBtn].forEach(btn=>{
+      btn.disabled = false;
+      btn.classList.remove('correct','wrong','dim');
+    });
+    nextQuestionBtn.hidden = true;
   }
 
-  // 依「卡片與欄位重疊面積」判斷目標欄位：卡片碰到哪個欄位的面積最大，就歸類到那裡
-  function getBestOverlapZone(cardRect){
-    let best = null, bestArea = 0;
-    dropzones.forEach(zone=>{
-      const r = zone.getBoundingClientRect();
-      const xOverlap = Math.min(cardRect.right, r.right) - Math.max(cardRect.left, r.left);
-      const yOverlap = Math.min(cardRect.bottom, r.bottom) - Math.max(cardRect.top, r.top);
-      if(xOverlap > 0 && yOverlap > 0){
-        const area = xOverlap * yOverlap;
-        if(area > bestArea){
-          bestArea = area;
-          best = zone;
-        }
+  function startQuiz(){
+    currentIndex = 0;
+    score = 0;
+    showScreen(quizScreen);
+    renderQuestion();
+  }
+
+  function handleAnswer(choice){
+    if(answered) return;
+    answered = true;
+
+    const q = QUESTIONS[currentIndex];
+    const isCorrect = choice === q.answer;
+    if(isCorrect) score++;
+
+    [lowAnswerBtn, highAnswerBtn].forEach(btn=>{
+      btn.disabled = true;
+      const btnAnswer = btn.dataset.answer;
+      if(btnAnswer === q.answer){
+        btn.classList.add('correct');
+      }else if(btnAnswer === choice){
+        btn.classList.add('wrong');
+      }else{
+        btn.classList.add('dim');
       }
     });
-    return best;
+
+    scoreValue.textContent = score;
+    showMessage(isCorrect ? '✅ 答對了！' : '❌ 答錯囉！', isCorrect ? 'success' : 'error');
+    nextQuestionBtn.hidden = false;
   }
 
-  function onPointerMove(e){
-    if(!dragEl) return;
-    dragEl.style.left = (e.clientX - offsetX)+'px';
-    dragEl.style.top = (e.clientY - offsetY)+'px';
-
-    const target = getBestOverlapZone(dragEl.getBoundingClientRect());
-
-    document.querySelectorAll('.zone, #sourcePile').forEach(el=>el.classList.remove('drag-over'));
-    if(target){
-      const highlightTarget = target.closest('.zone') || target;
-      highlightTarget.classList.add('drag-over');
-    }
-  }
-
-  function onPointerUp(e){
-    if(!dragEl) return;
-    const card = dragEl;
-    card.removeEventListener('pointermove', onPointerMove);
-    card.removeEventListener('pointerup', onPointerUp);
-    card.removeEventListener('pointercancel', onPointerUp);
-    try{ card.releasePointerCapture(e.pointerId); }catch(err){}
-
-    const target = getBestOverlapZone(card.getBoundingClientRect());
-
-    document.querySelectorAll('.zone, #sourcePile').forEach(el=>el.classList.remove('drag-over'));
-
-    card.classList.remove('dragging');
-    card.style.position = '';
-    card.style.left = '';
-    card.style.top = '';
-    card.style.width = '';
-
-    if(target){
-      target.appendChild(card);
-    }else if(placeholder && placeholder.parentElement){
-      placeholder.parentElement.insertBefore(card, placeholder);
+  function nextQuestion(){
+    currentIndex++;
+    if(currentIndex >= QUESTIONS.length){
+      showEnd();
     }else{
-      sourcePile.appendChild(card);
+      renderQuestion();
     }
-
-    if(placeholder && placeholder.parentElement){
-      placeholder.parentElement.removeChild(placeholder);
-    }
-    placeholder = null;
-    dragEl = null;
-
-    card.classList.remove('correct','wrong');
-    updateScore();
   }
 
-  // ---- Check answers ----
-  checkBtn.addEventListener('click', function(){
-    const total = CARDS.length;
-    const placed = lowDrop.children.length + highDrop.children.length;
+  function showEnd(){
+    clearMessage();
+    finalScoreText.textContent = '你答對了 ' + score + ' / ' + QUESTIONS.length + ' 題！';
+    showScreen(endScreen);
+  }
 
-    if(placed < total){
-      clearStatusClasses();
-      showMessage('⚠️ 還有圖卡尚未分類完成，請全部拖拉至欄位後再檢查！', 'warn');
-      return;
-    }
+  startBtn.addEventListener('click', startQuiz);
+  restartQuizBtn.addEventListener('click', startQuiz);
+  resetBtn.addEventListener('click', goToStart);
+  nextQuestionBtn.addEventListener('click', nextQuestion);
+  lowAnswerBtn.addEventListener('click', function(){ handleAnswer('low'); });
+  highAnswerBtn.addEventListener('click', function(){ handleAnswer('high'); });
 
-    let allCorrect = true;
-    Array.from(lowDrop.children).forEach(card=>{
-      const ok = card.dataset.correct === 'low';
-      card.classList.toggle('correct', ok);
-      card.classList.toggle('wrong', !ok);
-      if(!ok) allCorrect = false;
-    });
-    Array.from(highDrop.children).forEach(card=>{
-      const ok = card.dataset.correct === 'high';
-      card.classList.toggle('correct', ok);
-      card.classList.toggle('wrong', !ok);
-      if(!ok) allCorrect = false;
-    });
-
-    if(allCorrect){
-      showMessage('🎉 太棒了！全部分類正確！你已經完全掌握了預防過勞的核心觀念！', 'success');
-    }else{
-      showMessage('❌ 有部分圖卡分類錯誤（紅框標示），請調整後再次檢查！', 'error');
-    }
-  });
-
-  resetBtn.addEventListener('click', renderAll);
-
-  renderAll();
+  goToStart();
 })();
 </script>
 </body>
