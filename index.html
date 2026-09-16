@@ -110,8 +110,7 @@
     padding:15px 36px;
   }
   .cta-btn:active{transform:translateY(1px) scale(.98);}
-  #startBtn,#nextQuestionBtn{background:linear-gradient(90deg,#22d3ee,#34d399);color:#08221b;}
-  #restartQuizBtn{background:linear-gradient(135deg,#ffe259,#ffa751);color:#1e2a4a;}
+  #startBtn{background:linear-gradient(90deg,#22d3ee,#34d399);color:#08221b;}
 
   .stat-row{
     display:flex;justify-content:center;gap:14px;margin-bottom:20px;flex-wrap:wrap;
@@ -124,7 +123,7 @@
   .stat-chip .stat-value{display:block;font-size:18px;font-weight:900;color:#fff;}
 
   .question-img{
-    width:100%;max-width:420px;height:220px;object-fit:cover;border-radius:16px;
+    width:100%;max-width:400px;aspect-ratio:1/1;object-fit:cover;border-radius:16px;
     box-shadow:0 8px 20px rgba(9,16,36,.4);border:3px solid rgba(255,255,255,0.6);
     margin:0 auto 18px;display:block;background:#f0f2f6;
   }
@@ -133,17 +132,33 @@
 
   .answer-buttons{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
   .answer-btn{
-    font-family:inherit;font-weight:900;font-size:17px;border:none;border-radius:18px;
+    font-family:inherit;font-weight:900;font-size:17px;border-radius:18px;
     padding:20px 22px;flex:1 1 200px;max-width:240px;cursor:pointer;color:#fff;
-    box-shadow:0 8px 20px rgba(9,16,36,.35);transition:transform .12s, box-shadow .12s, filter .2s, opacity .2s;
+    background:linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06));
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    border:1.5px solid rgba(255,255,255,0.4);
+    box-shadow:0 10px 26px rgba(9,16,36,.4), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -8px 14px rgba(255,255,255,.05);
+    text-shadow:0 1px 3px rgba(9,16,36,.35);
+    transition:transform .15s, box-shadow .2s, border-color .2s, background .2s, filter .2s, opacity .2s;
   }
+  .answer-btn:hover{transform:translateY(-3px);}
   .answer-btn:active{transform:translateY(1px) scale(.98);}
-  .answer-btn.low{background:linear-gradient(135deg,#22c55e,#16a34a);}
-  .answer-btn.high{background:linear-gradient(135deg,#f97316,#ef4444);}
+  .answer-btn.low{border-color:rgba(52,211,153,.55);}
+  .answer-btn.high{border-color:rgba(255,148,87,.55);}
   .answer-btn:disabled{cursor:not-allowed;}
-  .answer-btn.dim{opacity:.4;filter:grayscale(.4);}
-  .answer-btn.correct{box-shadow:0 0 0 4px rgba(52,211,153,.55), 0 8px 20px rgba(9,16,36,.35);opacity:1;filter:none;}
-  .answer-btn.wrong{box-shadow:0 0 0 4px rgba(255,107,107,.55), 0 8px 20px rgba(9,16,36,.35);opacity:1;filter:none;}
+  .answer-btn.dim{opacity:.35;}
+  .answer-btn.correct{
+    background:linear-gradient(135deg, rgba(52,211,153,.35), rgba(52,211,153,.12));
+    border-color:#34d399;
+    box-shadow:0 0 0 4px rgba(52,211,153,.4), 0 10px 26px rgba(9,16,36,.4), inset 0 1px 0 rgba(255,255,255,.5);
+    opacity:1;
+  }
+  .answer-btn.wrong{
+    background:linear-gradient(135deg, rgba(255,107,107,.35), rgba(255,107,107,.12));
+    border-color:var(--wrong-color);
+    box-shadow:0 0 0 4px rgba(255,107,107,.4), 0 10px 26px rgba(9,16,36,.4), inset 0 1px 0 rgba(255,255,255,.5);
+    opacity:1;
+  }
 
   footer{text-align:center;color:var(--sub-ink);opacity:.65;font-size:13px;margin-top:34px;}
 
@@ -160,7 +175,7 @@
 
   @media (max-width:640px){
     .quiz-panel{padding:22px 16px 24px;border-radius:20px;}
-    .question-img{height:180px;}
+    .question-img{max-width:300px;}
     .question-title{font-size:19px;}
     .answer-btn{flex:1 1 45%;padding:18px 12px;font-size:15px;}
     button,.btn-link{min-width:0;flex:1 1 140px;padding:13px 14px;}
@@ -216,8 +231,6 @@
         <button class="answer-btn low" id="lowAnswerBtn" data-answer="low">🟢 減少過勞風險</button>
         <button class="answer-btn high" id="highAnswerBtn" data-answer="high">🔴 增加過勞風險</button>
       </div>
-
-      <button class="cta-btn" id="nextQuestionBtn" hidden>➡️ 下一題</button>
     </div>
 
     <!-- 結算畫面 -->
@@ -225,7 +238,6 @@
       <div class="screen-icon">🎉</div>
       <h2>遊戲結束！</h2>
       <p id="finalScoreText">你答對了 8 / 8 題！</p>
-      <button class="cta-btn" id="restartQuizBtn">🔄 重新開始</button>
     </div>
   </div>
 
@@ -265,8 +277,6 @@
 
   const startBtn = document.getElementById('startBtn');
   const resetBtn = document.getElementById('resetBtn');
-  const restartQuizBtn = document.getElementById('restartQuizBtn');
-  const nextQuestionBtn = document.getElementById('nextQuestionBtn');
   const lowAnswerBtn = document.getElementById('lowAnswerBtn');
   const highAnswerBtn = document.getElementById('highAnswerBtn');
 
@@ -278,9 +288,19 @@
   const finalScoreText = document.getElementById('finalScoreText');
   const messageEl = document.getElementById('message');
 
+  const AUTO_ADVANCE_DELAY = 1400;
+
   let currentIndex = 0;
   let score = 0;
   let answered = false;
+  let advanceTimer = null;
+
+  function clearAdvanceTimer(){
+    if(advanceTimer){
+      clearTimeout(advanceTimer);
+      advanceTimer = null;
+    }
+  }
 
   function clearMessage(){
     messageEl.className = 'hidden';
@@ -297,6 +317,7 @@
   }
 
   function goToStart(){
+    clearAdvanceTimer();
     currentIndex = 0;
     score = 0;
     answered = false;
@@ -320,10 +341,10 @@
       btn.disabled = false;
       btn.classList.remove('correct','wrong','dim');
     });
-    nextQuestionBtn.hidden = true;
   }
 
   function startQuiz(){
+    clearAdvanceTimer();
     currentIndex = 0;
     score = 0;
     showScreen(quizScreen);
@@ -352,10 +373,13 @@
 
     scoreValue.textContent = score;
     showMessage(isCorrect ? '✅ 答對了！' : '❌ 答錯囉！', isCorrect ? 'success' : 'error');
-    nextQuestionBtn.hidden = false;
+
+    clearAdvanceTimer();
+    advanceTimer = setTimeout(nextQuestion, AUTO_ADVANCE_DELAY);
   }
 
   function nextQuestion(){
+    clearAdvanceTimer();
     currentIndex++;
     if(currentIndex >= QUESTIONS.length){
       showEnd();
@@ -371,9 +395,7 @@
   }
 
   startBtn.addEventListener('click', startQuiz);
-  restartQuizBtn.addEventListener('click', startQuiz);
   resetBtn.addEventListener('click', goToStart);
-  nextQuestionBtn.addEventListener('click', nextQuestion);
   lowAnswerBtn.addEventListener('click', function(){ handleAnswer('low'); });
   highAnswerBtn.addEventListener('click', function(){ handleAnswer('high'); });
 
