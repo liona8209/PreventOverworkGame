@@ -260,7 +260,7 @@
 (function(){
   "use strict";
 
-  const QUESTIONS = [
+  const QUESTIONS_DATA = [
     { title:"健康管理",       desc:"定期健康檢查與追蹤。",                     answer:"low",  img:"Image/健康管理.png" },
     { title:"身體活動",       desc:"規律適度運動。",                            answer:"low",  img:"Image/身體活動.png" },
     { title:"充足休息",       desc:"適當休息。",                                answer:"low",  img:"Image/充足休息.png" },
@@ -270,6 +270,17 @@
     { title:"不良作業環境",   desc:"異常高、低溫環境或充斥噪音等特殊作業環境。",answer:"high", img:"Image/不良作業環境.png" },
     { title:"過重負荷",       desc:"長期工作過重或短期工作超過負荷。",          answer:"high", img:"Image/過重負荷.png" }
   ];
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  let QUESTIONS = QUESTIONS_DATA;
 
   const startScreen = document.getElementById('startScreen');
   const quizScreen = document.getElementById('quizScreen');
@@ -345,6 +356,7 @@
 
   function startQuiz(){
     clearAdvanceTimer();
+    QUESTIONS = shuffle(QUESTIONS_DATA);
     currentIndex = 0;
     score = 0;
     showScreen(quizScreen);
